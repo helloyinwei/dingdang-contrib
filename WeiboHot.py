@@ -43,18 +43,24 @@ def handle(text, mic, profile, wxbot=None):
     m = pattern.search(text_utf8)
     if len(m.group(2)) == 0 or (int(m.group(2))) > 0:
         if len(m.group(2)) == 0:
+            num_mic = 10
             num = 10
         elif (int(m.group(2))) > 0 and (int(m.group(2))) < 21:
-            num = int(m.group(2))
+            num_mic = int(m.group(2))
+            num = num_mic
         else:
             if wxbot:
-                num = 20
+                num_mic = 20
                 mic.say(u'条数过多,只播放二十条,热搜将发到微信')
-            else:
                 if (int(m.group(2))) < len(list_50_name):
                     num = int(m.group(2))
                 else:
                     num = len(list_50_name)
+            else:
+                if (int(m.group(2))) < len(list_50_name):
+                    num_mic = int(m.group(2))
+                else:
+                    num_mic = len(list_50_name)
         
         if wxbot:
             list_send = list_50[0:num]
@@ -64,7 +70,7 @@ def handle(text, mic, profile, wxbot=None):
             wxbot.send_msg_by_uid(list_send, 'filehelper')
         else:
             pass
-        for i in range(num):
+        for i in range(num_mic):
             mic.say(list_50_name[i])
         mic.say(u'您对第几条感兴趣？', cache=True)
         interest = mic.activeListen(MUSIC=True)
@@ -84,7 +90,7 @@ def handle(text, mic, profile, wxbot=None):
                 mic.say(u'指令有错误', cache=True)
                 return
             try:
-                if(int(m_in.group(2))) > 0 and (int(m_in.group(2))) < num + 1:
+                if(int(m_in.group(2))) > 0 and (int(m_in.group(2))) < num_mic + 1:
                     index = int(m_in.group(2))
                     interest = get_interest(list_href2[index - 1])
                     interest = interest.encode('utf-8')
